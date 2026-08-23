@@ -2,32 +2,13 @@ import redis
 import os
 import time
 import json
-from db_connect import r,REDIS_HOST,REDIS_PORT
+from db_connect import r
 
 # טעינת משתני סביבה בלבד (ללא שום ערכים קשיחים)
 
-SEED_FILE_PATH = os.getenv('SEED_FILE_PATH', 'seed_data.json')
-
-if not REDIS_HOST or not REDIS_PORT:
-    raise ValueError("Environment variables REDIS_HOST and REDIS_PORT must be set!")
-
-REDIS_PORT = int(REDIS_PORT)
+SEED_FILE_PATH = os.getenv('SEED_FILE_PATH', 'config.json')
 
 
-def get_redis_connection():
-    print(f"Connecting to Redis at {REDIS_HOST}:{REDIS_PORT}...")
-    while True:
-        try:
-            r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
-            if r.ping():
-                print("Connected to Redis successfully!")
-                return r
-        except Exception:
-            print("Waiting for Redis to wake up...")
-            time.sleep(2)
-
-
-r = get_redis_connection()
 
 
 def run_external_seed():

@@ -15,21 +15,19 @@ class EarthquakeDashboard:
         events = r.lrange("quakewatch:recent:events", 0, -1)
         return render_template('main_page.html',stations=stations, events=events)
 
-    @staticmethod
     @dashboard_blueprint.route('/add_station', methods=['POST'])
     def add_station():
         station_name = request.form.get('station_name')
         if station_name:
             r.sadd("quakewatch:stations:list", station_name)
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for('dashboard.main_page'))
 
-    @staticmethod
     @dashboard_blueprint.route('/add_event', methods=['POST'])
     def add_event():
         event_desc = request.form.get('event_desc')
         if event_desc:
             r.rpush("quakewatch:recent:events", event_desc)
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for('dashboard.main_page'))
 
     @staticmethod
     @dashboard_blueprint.route('/ping')
