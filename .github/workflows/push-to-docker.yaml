@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v3
         with:
 
-          repository: ronaelshef3/GITops
+          repository: aharonshefer3-maker/Gitops2
 
           path: ops-repo
 
@@ -62,7 +62,7 @@ jobs:
 
           NEW_TAG="v0.${{ github.run_number }}"
           # <--- נניח שזה הנתיב לקובץ הראשי בריפו ה-Ops
-          VALUES_FILE_PATH="ops-repo/my-app-chart/values.yaml"
+          VALUES_FILE_PATH="app-manifests/quakewatch-chart/values.yaml"
 
           # נעדכן את השדה image.tag בתוך הקובץ
           yq -i ".image.tag = \"$NEW_TAG\"" $VALUES_FILE_PATH
@@ -78,7 +78,7 @@ jobs:
 
 
           # הנתיב כאן הוא יחסי ל-ops-repo
-          git add my-app-chart/values.yaml
+          git add app-manifests/quakewatch-chart/values.yaml
 
 
           if git diff-index --quiet HEAD; then
