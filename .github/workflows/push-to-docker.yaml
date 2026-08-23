@@ -62,7 +62,7 @@ jobs:
 
           NEW_TAG="v0.${{ github.run_number }}"
           # <--- נניח שזה הנתיב לקובץ הראשי בריפו ה-Ops
-          VALUES_FILE_PATH="app-manifests/quakewatch-chart/values.yaml"
+          VALUES_FILE_PATH="ops-repo/app-manifests/quakewatch-chart/values.yaml"
 
           # נעדכן את השדה image.tag בתוך הקובץ
           yq -i ".image.tag = \"$NEW_TAG\"" $VALUES_FILE_PATH
