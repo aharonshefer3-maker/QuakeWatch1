@@ -1,4 +1,7 @@
 import matplotlib
+
+from seeder import run_external_seed
+
 matplotlib.use('Agg')  # Force non-GUI backend before any other matplotlib import
 import time
 import os
@@ -9,7 +12,12 @@ from dashboard import dashboard_blueprint
 from prometheus_client import Counter, Histogram, generate_latest, REGISTRY
 import werkzeug.exceptions
 
+
+
+
 from utils import timestamp_to_str  # Import our custom filter
+
+
 
 REQUEST_LATENCY = Histogram(
     'http_request_latency_seconds',
@@ -26,13 +34,12 @@ REQUEST_COUNT = Counter(
 )
 
 
-
+run_external_seed()
 
 
 
 def create_app():
-
-
+    run_external_seed()
 
     app = Flask(__name__)
 

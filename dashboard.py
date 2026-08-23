@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, jsonify, request, send_file, current_app
+from flask import Blueprint, render_template, jsonify, request, send_file, current_app, redirect
 from utils import generate_graph, get_top_earthquakes, get_last_earthquake, COUNTRIES
 from datetime import datetime, timedelta
 import requests
+from flask import url_for
+from db_connect import r
 
 dashboard_blueprint = Blueprint('dashboard', __name__)
 
@@ -9,7 +11,25 @@ class EarthquakeDashboard:
     @staticmethod
     @dashboard_blueprint.route('/')
     def main_page():
-        return render_template('main_page.html')
+        stations = list(r.smembers("quakewatch:stations:list"))
+        events = r.lrange("quakewatch:recent:events", 0, -1)
+        return render_template('main_page.html',stations=stations, events=events)
+
+    @staticmethod
+    @dashboard_blueprint.route('/add_station', methods=['POST'])
+    def add_station():
+        station_name = request.form.get('station_name')
+        if station_name:
+            r.sadd("quakewatch:stations:list", station_name)
+        return redirect(url_for('dashboard.index'))
+
+    @staticmethod
+    @dashboard_blueprint.route('/add_event', methods=['POST'])
+    def add_event():
+        event_desc = request.form.get('event_desc')
+        if event_desc:
+            r.rpush("quakewatch:recent:events", event_desc)
+        return redirect(url_for('dashboard.index'))
 
     @staticmethod
     @dashboard_blueprint.route('/ping')
@@ -77,8 +97,8 @@ class EarthquakeDashboard:
                 processed_events.append(event_data)
             result = {
                 'count': len(processed_events),
-                'events': processed_events
-            }
+                'events': processed_events}
+
             return jsonify(result), 200
         else:
             current_app.logger.error("Error fetching data from USGS API")

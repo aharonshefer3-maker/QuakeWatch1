@@ -2,10 +2,10 @@ import redis
 import os
 import time
 import json
+from db_connect import r,REDIS_HOST,REDIS_PORT
 
 # טעינת משתני סביבה בלבד (ללא שום ערכים קשיחים)
-REDIS_HOST = os.getenv('REDIS_HOST')
-REDIS_PORT = os.getenv('REDIS_PORT')
+
 SEED_FILE_PATH = os.getenv('SEED_FILE_PATH', 'seed_data.json')
 
 if not REDIS_HOST or not REDIS_PORT:
