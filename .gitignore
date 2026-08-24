@@ -4,3 +4,4 @@ logs/
 *.log
 /shelf/
 /workspace.xml
+/.idea
