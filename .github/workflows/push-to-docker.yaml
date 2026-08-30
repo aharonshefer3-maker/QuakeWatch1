@@ -1,4 +1,3 @@
-# .github/workflows/docker-image-build.yaml
 name: Build and Deploy Docker Image
 
 on:
@@ -7,19 +6,19 @@ on:
       - main
       - master
 
+permissions:
+  contents: write
 
-
-permissions: write-all
 jobs:
-  test-conflict :
+  test-conflict:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -31,37 +30,23 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-
-
-
           push: true
-
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/quakewatch:v0.${{ github.run_number }}
 
       - name: Checkout Ops repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-
           repository: aharonshefer3-maker/Gitops2
-
           path: ops-repo
-
-
-
-          token: ${{secrets.AHTOKN}}
+          token: ${{ secrets.AHTOKN }}
           ssh-strict: true
           persist-credentials: true
 
-
-
-
       - name: Update values.yaml in Ops repo (using yq)
         run: |
-
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 
           NEW_TAG="v0.${{ github.run_number }}"
-          # <--- נניח שזה הנתיב לקובץ הראשי בריפו ה-Ops
           VALUES_FILE_PATH="ops-repo/app-manifests/quakewatch-chart/values.yaml"
 
           # נעדכן את השדה image.tag בתוך הקובץ
@@ -69,24 +54,19 @@ jobs:
 
       - name: Commit updated values.yaml to Ops repo
         run: |
-          # ניכנס לתיקיית ריפו ה-Ops ששכפלנו
           cd ops-repo
-
 
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+          # הזרקת ה-Token לתוך כתובת ה-Remote כדי שהדחיפה תעבוד בהצלחה עם AHTOKN
+          git remote set-url origin https://x-access-token:${{ secrets.AHTOKN }}@github.com/aharonshefer3-maker/Gitops2.git
 
-          # הנתיב כאן הוא יחסי ל-ops-repo
           git add app-manifests/quakewatch-chart/values.yaml
-
 
           if git diff-index --quiet HEAD; then
             echo "No changes to commit to Ops repo."
           else
-
             git commit -m "Update image tag for quakewatch to v0.${{ github.run_number }} [skip ci]"
-
-            # נדחוף את השינוי לריפו ה-Ops
             git push
           fi
