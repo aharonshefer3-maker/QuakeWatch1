@@ -1,0 +1,13 @@
+{
+  "system_info": {
+    "status": "Active",
+    "version": "v1.0"
+  },
+  "stations": [
+    "Station-1",
+    "Station-2"
+  ],
+  "recent_events": [
+    "System initialized successfully via external config"
+  ]
+}

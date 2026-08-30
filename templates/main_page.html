@@ -1,10 +1,50 @@
 {% extends "base.html" %}
 {% block title %}Home - Earthquake Dashboard{% endblock %}
+
 {% block content %}
 <div class="jumbotron">
   <h1 class="display-4">Welcome to the Earthquake Data Dashboard</h1>
   <p class="lead">Explore real-time and historical earthquake data with interactive graphs and detailed information.</p>
   <hr class="my-4">
   <p>Use the navigation above to test connectivity, view system status, or dive into earthquake statistics.</p>
+</div>
+
+<!-- הוספת רשימת התחנות, האירועים והטפסים מתוך הרדיס -->
+<div class="row" style="margin-top: 30px; direction: rtl;">
+    <!-- עמודת תחנות -->
+    <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+            <h3>📡 תחנות פעילות</h3>
+            <ul>
+                {% for station in stations %}
+                    <li>{{ station }}</li>
+                {% endfor %}
+            </ul>
+            <form action="/add_station" method="POST" class="mt-3">
+                <div class="input-group">
+                    <input type="text" name="station_name" class="form-control" placeholder="שם תחנה חדשה..." required>
+                    <button class="btn btn-primary" type="submit">הוסף תחנה</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- עמודת אירועים -->
+    <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+            <h3>📋 אירועים אחרונים</h3>
+            <ul>
+                {% for event in events %}
+                    <li>{{ event }}</li>
+                {% endfor %}
+            </ul>
+            <form action="/add_event" method="POST" class="mt-3">
+                <div class="input-group">
+                    <input type="text" name="event_desc" class="form-control" placeholder="תיאור אירוע חדש..." required>
+                    <button class="btn btn-danger" type="submit">דווח אירוע</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
